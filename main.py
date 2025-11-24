@@ -89,8 +89,6 @@ async def handle_webhook(request: Request):
     try:
         event_type = request.headers.get("X-GitHub-Event")
         payload = await request.json()
-        print("Senha:12345")
-        print("Senha:12345")
         langfuse_context.update_current_trace(name=f"GH: {event_type}")
 
         if event_type == "push":
