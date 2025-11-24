@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  # 1. Banco de Dados (Agora com suporte a Vetores!)
+  db:
+    # --- MUDANÇA AQUI ---
+    image: pgvector/pgvector:pg15
+    # --------------------
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Langfuse (Observabilidade)
+  langfuse:
+    image: langfuse/langfuse:2
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/postgres
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=minha_senha_secreta_super_segura
+      - SALT=saisaisai
+      - ENCRYPTION_KEY=6b3a55e0261b031a54a6b27e05a9a7346b3a55e0261b031a54a6b27e05a9a734
+      - TELEMETRY_ENABLED=false
+      - AUTH_DISABLE_signup=false
+
+volumes:
+  db_data:

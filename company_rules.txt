@@ -1,0 +1,9 @@
+Segurança: É estritamente proibido hardcodar senhas, tokens ou chaves de API no código. Use variáveis de ambiente.
+
+Logs: Nunca utilize 'print()' ou 'System.out.println()' para logs. Utilize a biblioteca de logging padrão configurada com níveis (INFO, ERROR).
+
+Performance: Evite loops aninhados (O(n^2)) em processamento de listas grandes. Prefira mapas ou sets.
+
+Padrão de Commit: As mensagens de commit devem começar com um verbo no imperativo (ex: "Adiciona", "Corrige").
+
+Tratamento de Erro: Nunca capture exceções genéricas (Exception e) sem 

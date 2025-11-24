@@ -7,12 +7,17 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.110.0"   # O Framework Web mais rápido para Python
-uvicorn = "^0.29.0"    # O servidor que roda o FastAPI
-python-dotenv = "^1.0.0" # Para ler arquivo .env
-pydantic = "^2.6.0"    # Para validação de dados (Essencial em Ops)
-google-generativeai = "^0.8.5"
-pygithub = "^2.8.1"
+fastapi = "^0.110.0"
+uvicorn = "^0.29.0"
+python-dotenv = "^1.0.0"
+pydantic = "^2.6.0"
+google-generativeai = "^0.4.0" # Garante versão recente para embeddings
+langfuse = "^2.0.0"
+pygithub = "^2.0.0"
+# --- NOVAS DEPENDÊNCIAS RAG ---
+psycopg2-binary = "^2.9.9" # Driver do Postgres
+pgvector = "^0.2.0"        # Lib para lidar com vetores no Python
+numpy = "^1.26.0"          # Matemática para vetores
 
 [build-system]
 requires = ["poetry-core"]
