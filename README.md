@@ -4,7 +4,7 @@ Um Agente Autônomo de LLMOps que integra Inteligência Artificial Generativa di
 
 ## 📖 Sobre o Projeto
 
-O GitOps AI Sentinel resolve o gargalo de Code Reviews manuais e tarefas repetitivas de localização (i18n). Ele atua como um "Engenheiro de DevOps Sênior" (com uma personalidade sarcástica configurável) que vive dentro do seu repositório.
+O GitOps AI Sentinel serve para fazer Code Reviews automaticos ou sugerir melhorias de solução(com base no company_rules). Ele atua como um "Engenheiro de DevOps Sênior" (com uma personalidade sarcástica configurável) que vive dentro do seu repositório.
 
 Diferente de bots simples, este projeto implementa uma arquitetura robusta de LLMOps, focando em:
 
@@ -12,29 +12,13 @@ Diferente de bots simples, este projeto implementa uma arquitetura robusta de LL
 - **Contexto (RAG)**: Capacidade de validar código contra regras internas da empresa (Compliance).
 - **Segurança**: Prevenção de vazamento de segredos em prompts.
 
-## 🏗️ Arquitetura do Sistema
+## Arquitetura do Sistema
 
 O sistema segue uma arquitetura orientada a eventos (Event-Driven), reagindo a Webhooks do GitHub em tempo real.
 
-graph LR
-User((Dev)) -->|Git Push| GitHub
-GitHub -->|Webhook JSON| Sentinel[⚡ FastAPI Server]
+## Funcionalidades Principais
 
-```
-subgraph "GitOps Sentinel Core"
-    Sentinel -->|Async Task| AI_Orchestrator
-    AI_Orchestrator -->|Get Context| VectorDB[(🐘 Postgres/pgvector)]
-    AI_Orchestrator -->|Trace| Langfuse[🔍 Langfuse Ops]
-    AI_Orchestrator -->|Inference| Gemini[🧠 Google Gemini 1.5]
-end
-
-Gemini -->|Review/Code| AI_Orchestrator
-AI_Orchestrator -->|Post Comment| GitHub
-```
-
-## 🚀 Funcionalidades Principais
-
-### 1. 🧐 Sarcastic Code Reviewer
+### 1. Sarcastic Code Reviewer
 
 Analisa o diff de cada Pull Request ou Push.
 
@@ -52,22 +36,18 @@ Utiliza RAG (Retrieval-Augmented Generation) para garantir que o código siga as
 
 **Aplicação:** Antes de revisar o código, o bot busca regras relevantes (ex: "Sempre use Logger ao invés de System.out"). Isso reduz alucinações e garante conformidade.
 
-### 3. 🌍 Polyglot Translator (i18n)
-
-Detecta alterações em arquivos de tradução (`.json`, `.properties`) e gera automaticamente as versões para outros idiomas (PT-BR, ES, EN), abrindo um PR automático com as correções.
-
 ## 🛠️ Tech Stack & Decisões de Engenharia
 
 | Componente          | Tecnologia              | Justificativa Técnica                                              |
 | ------------------- | ----------------------- | ------------------------------------------------------------------ |
-| **Linguagem**       | Python 3.11+            | Ecossistema nativo de IA e bibliotecas robustas de Data Science.   |
+| **Linguagem**       | Python 3.10+            | Ecossistema nativo de IA e bibliotecas robustas de Data Science.   |
 | **API Framework**   | FastAPI                 | Suporte nativo a async/await e validação Pydantic.                 |
 | **LLM Provider**    | Google Gemini 2.5 Flash | Janela de contexto massiva (1M tokens) com baixo custo e latência. |
 | **Database**        | PostgreSQL + pgvector   | Dados relacionais + vetoriais em uma solução única.                |
 | **Observabilidade** | Langfuse                | Traces, custos por token e datasets de avaliação.                  |
 | **Container**       | Docker Compose          | Orquestração simples para dev e prod.                              |
 
-## ⚡ Como Rodar Localmente
+## Como Rodar Localmente
 
 ### Pré-requisitos
 
@@ -129,12 +109,6 @@ Exemplo do que é monitorado no Langfuse:
 - **Token Usage**: Custo preciso por análise.
 - **Quality Gate**: Score da utilidade da resposta da IA.
 
-## 🔮 Próximos Passos (Roadmap)
+## Próximos Passos
 
-- [ ] Implementar sistema de cache (Redis) para evitar re-analisar commits inalterados.
-- [ ] Adicionar testes de avaliação automatizados (DeepEval) no pipeline de CI.
-- [ ] Suporte a análise de imagens (Multimodal) para revisar capturas de tela de UI em PRs.
-
----
-
-Made with ☕ and 🐍 by **Seu Nome**
+- [ ] Implementar na cloud para gerenciar todos os repositórios ou criar de alguma forma um pacote para isso

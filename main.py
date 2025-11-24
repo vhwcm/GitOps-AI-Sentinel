@@ -37,24 +37,21 @@ logger = logging.getLogger("gitops-sentinel")
 
 app = FastAPI(title="GitOps AI Sentinel")
 
-# --- FUNÇÃO RAG (NOVIDADE) ---
+# --- FUNÇÃO RAG ---
 def get_relevant_rules(query_text: str):
     """Busca regras no Postgres similares ao texto do código."""
     try:
-        # 1. Gera embedding da query (o diff do código)
         emb_result = genai.embed_content(
             model=EMBED_MODEL,
-            content=query_text[:2000], # Limite para não estourar
+            content=query_text[:2000], 
             task_type="retrieval_query"
         )
         query_vector = emb_result['embedding']
 
-        # 2. Conecta no banco e busca por similaridade (Operador <->)
         conn = psycopg2.connect(db_url)
         register_vector(conn)
         cur = conn.cursor()
         
-        # SQL Mágico: Traz as 3 regras mais próximas (distância cosseno menor)
         cur.execute("""
             SELECT content FROM company_rules 
             ORDER BY embedding <-> %s LIMIT 3
