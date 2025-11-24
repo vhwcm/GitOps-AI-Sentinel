@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gitops-ai-sentinel"
+version = "0.1.0"
+description = "Agente de LLMOps para automação de Code Review e Tradução"
+authors = ["Victor Hugo <vichwcm@gmail.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.110.0"   # O Framework Web mais rápido para Python
+uvicorn = "^0.29.0"    # O servidor que roda o FastAPI
+python-dotenv = "^1.0.0" # Para ler arquivo .env
+pydantic = "^2.6.0"    # Para validação de dados (Essencial em Ops)
+google-generativeai = "^0.8.5"
+pygithub = "^2.8.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
