@@ -4,12 +4,12 @@ import asyncio
 from fastapi import FastAPI, Request, HTTPException
 from dotenv import load_dotenv
 import google.generativeai as genai
-from github import Github # Importando a lib do GitHub
+from github import Github
 
 # --- CONFIGURAÇÃO ---
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
-github_token = os.getenv("GITHUB_TOKEN") # Nova variável
+github_token = os.getenv("GITHUB_TOKEN")
 
 if not api_key or not github_token:
     raise ValueError("ERRO: Configure GEMINI_API_KEY e GITHUB_TOKEN no .env")
@@ -53,38 +53,44 @@ async def handle_webhook(request: Request):
         if event_type == "push":
             repo_name = payload.get("repository", {}).get("full_name")
             pusher = payload.get("pusher", {}).get("name")
-            commit_sha = payload.get("head_commit", {}).get("id") # O ID único do commit
+            commit_sha = payload.get("head_commit", {}).get("id")
             
             logger.info(f"🚀 Push de {pusher} em {repo_name} (Commit {commit_sha[:7]})")
             
-            # 1. Usar a API do GitHub para pegar os arquivos reais modificados
-            # Isso roda bloqueante, idealmente seria async, mas para MVP ok.
+            # 1. Pega o Diff
             repo = git_client.get_repo(repo_name)
             commit = repo.get_commit(commit_sha)
             
             diff_text = ""
-            # Pegamos os primeiros 2 arquivos para não estourar o limite (boas práticas)
-            for file in commit.files[:2]:
+            # Limite de segurança: analisa apenas os primeiros 3 arquivos para não gastar tokens demais
+            for file in commit.files[:3]:
                 diff_text += f"\nArquivo: {file.filename}\nStatus: {file.status}\n"
-                diff_text += f"Mudanças:\n{file.patch}\n" # .patch é o diff (+/- linhas)
+                diff_text += f"Mudanças:\n{file.patch}\n"
             
             if not diff_text:
-                logger.info("Nenhuma mudança de código detectada (talvez apenas docs/imagens).")
                 return {"status": "ignored"}
 
-            # 2. Prompt Técnico (Agora ele vê o código!)
+            # 2. Prompt (Mantendo a persona sarcástica que funcionou bem)
             prompt = (
                 f"Você é um Tech Lead Sênior e Sarcástico. "
                 f"Analise este DIFF de código feito por '{pusher}'. "
                 f"Procure por: más práticas, erros de segurança ou código feio. "
-                f"Se estiver tudo ok, faça uma piada sobre como isso vai quebrar na sexta-feira.\n\n"
+                f"Se estiver tudo ok, faça uma piada sobre como isso vai quebrar na sexta-feira. "
+                f"Seja breve (máximo 1 parágrafo de introdução e 2 bullet points).\n\n"
                 f"--- CÓDIGO ---\n{diff_text}"
             )
             
-            logger.info("🤔 Analisando o código com Gemini...")
+            logger.info("🤔 Analisando e gerando review...")
             ai_reply = await ask_gemini(prompt)
             
-            logger.info(f"\n{'='*40}\n🤖 CODE REVIEW AUTOMÁTICO:\n{ai_reply}\n{'='*40}")
+            # 3. AÇÃO REAL: Postar no GitHub
+            # Isso faz o comentário aparecer lá na interface web do commit!
+            try:
+                logger.info("✍️ Postando comentário no GitHub...")
+                commit.create_comment(f"🤖 **GitOps Sentinel Review:**\n\n{ai_reply}")
+                logger.info("✅ Comentário postado com sucesso!")
+            except Exception as e:
+                logger.error(f"Erro ao postar no GitHub: {e}")
             
         return {"status": "processed"}
 

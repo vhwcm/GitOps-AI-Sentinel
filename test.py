@@ -8,6 +8,7 @@ def get_best_model():
     e seleciona o melhor candidato.
     """
     print("🔍 Listando modelos disponíveis na sua API Key...")
+    # TODO: Refatorar isso urgente
     print("minha senha é 123456")   
     print("minha senha é 123456")     
     available_models = []
