@@ -26,7 +26,7 @@ Analisa o diff de cada Pull Request ou Push.
 
 **Persona:** Configurável para atuar como um "Tech Lead Rabugento", tornando os reviews mais engajadores.
 
-### 2. 🛡️ Compliance Guardrails (RAG)
+### 2. Compliance Guardrails (RAG)
 
 **Feature de Destaque de Engenharia**
 
@@ -99,10 +99,7 @@ ngrok http 8000
 
 Configure a URL gerada (`https://.../webhook`) no repositório do GitHub.
 
-## 📊 LLMOps: Monitoramento e Custos
-
-Este projeto leva a sério a engenharia financeira (FinOps) e performance.
-
+## Monitoramento
 Exemplo do que é monitorado no Langfuse:
 
 - **Trace Latency**: Tempo entre o Webhook e o comentário no PR.
