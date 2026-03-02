@@ -1,5 +1,7 @@
 # 🛡️ GitOps AI Sentinel
 
+## Leiam os comentários dos commits ;)
+
 Um Agente Autônomo de LLMOps que integra Inteligência Artificial Generativa diretamente ao ciclo de CI/CD.
 
 ## 📖 Sobre o Projeto
